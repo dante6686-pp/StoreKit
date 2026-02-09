@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StoreKit — Store pages that sell (in minutes)</title>
+  <meta name="description" content="Paste your messy notes. Get a polished Steam/itch store page: short pitch, full description, feature bullets, and tags — in minutes." />
+  <meta name="theme-color" content="#0b0f1a" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="StoreKit — Store pages that sell (in minutes)" />
+  <meta property="og:description" content="Generate a Steam/itch store page from rough notes: pitch, description, bullets, and tags." />
+  <meta property="og:type" content="website" />
+  <!-- TODO: add your deployed URL -->
+  <meta property="og:url" content="https://YOUR_DOMAIN_HERE" />
+  <!-- TODO: add og image -->
+  <meta property="og:image" content="https://YOUR_DOMAIN_HERE/og.png" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" />
+
+  <style>
+    :root{
+      --bg: #070a12;
+      --panel: rgba(255,255,255,0.06);
+      --panel2: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.12);
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.68);
+      --muted2: rgba(255,255,255,0.55);
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 18px;
+      --radius2: 24px;
+
+      --accent: #7c3aed;      /* purple */
+      --accent2: #22c55e;     /* green  */
+      --accent3: #06b6d4;     /* cyan   */
+
+      --max: 1120px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{ box-sizing: border-box; }
+    html, body{ height: 100%; }
+    body{
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 600px at 10% 10%, rgba(124, 58, 237, 0.28), transparent 55%),
+        radial-gradient(900px 600px at 90% 25%, rgba(6, 182, 212, 0.18), transparent 55%),
+        radial-gradient(900px 600px at 50% 90%, rgba(34, 197, 94, 0.12), transparent 55%),
+        linear-gradient(180deg, #070a12 0%, #050711 60%, #04050c 100%);
+      overflow-x: hidden;
+    }
+
+    a{ color: inherit; text-decoration: none; }
+    .wrap{ max-width: var(--max); margin: 0 auto; padding: 0 18px; }
+
+    /* Top nav */
+    .nav{
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(10px);
+      background: rgba(7,10,18,0.55);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-in{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 0;
+    }
+    .brand{
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; letter-spacing: 0.2px;
+    }
+    .logo{
+      width: 34px; height: 34px; border-radius: 12px;
+      background:
+        radial-gradient(14px 14px at 30% 30%, rgba(255,255,255,0.9), transparent 60%),
+        linear-gradient(135deg, rgba(124,58,237,1), rgba(6,182,212,1));
+      box-shadow: 0 14px 40px rgba(124,58,237,0.25);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .nav-links{
+      display: flex; align-items: center; gap: 14px;
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .nav-links a{
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+    .nav-links a:hover{
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.86);
+    }
+
+    /* Buttons */
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.92);
+      cursor: pointer;
+      user-select: none;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.28);
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.08);
+    }
+    .btn.primary{
+      border: 1px solid rgba(124,58,237,0.55);
+      background: linear-gradient(135deg, rgba(124,58,237,1), rgba(6,182,212,1));
+      box-shadow: 0 18px 60px rgba(124,58,237,0.22);
+    }
+    .btn.primary:hover{
+      box-shadow: 0 18px 70px rgba(124,58,237,0.30);
+    }
+    .btn.small{
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .btn.ghost{
+      background: rgba(255,255,255,0.04);
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: none;
+    }
+
+    /* Hero */
+    .hero{
+      padding: 54px 0 26px;
+    }
+    .hero-grid{
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+      align-items: start;
+    }
+    .pill{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .dot{
+      width: 8px; height: 8px; border-radius: 999px;
+      background: var(--accent2);
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.12);
+    }
+    h1{
+      margin: 14px 0 10px;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.05;
+      letter-spacing: -0.6px;
+    }
+    .sub{
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 56ch;
+      margin: 0 0 18px;
+    }
+    .cta-row{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 10px 0 10px;
+    }
+    .microtrust{
+      color: var(--muted2);
+      font-size: 13px;
+      margin-top: 10px;
+    }
+    .stats{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .chip{
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .chip b{ color: rgba(255,255,255,0.88); }
+
+    /* Form card */
+    .card{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .card-in{
+      padding: 18px;
+    }
+    .card-head{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .card-title{
+      font-weight: 900;
+      letter-spacing: 0.2px;
+    }
+    .badge{
+      font-size: 12px;
+      font-weight: 900;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+    }
+
+    .grid2{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    label{
+      display: block;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      color: var(--muted2);
+      margin: 6px 0 6px;
+      text-transform: uppercase;
+    }
+    select, textarea, input{
+      width: 100%;
+      color: rgba(255,255,255,0.92);
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px;
+      padding: 12px 12px;
+      outline: none;
+      font: inherit;
+    }
+    select:focus, textarea:focus, input:focus{
+      border-color: rgba(124,58,237,0.65);
+      box-shadow: 0 0 0 4px rgba(124,58,237,0.18);
+    }
+    textarea{
+      min-height: 120px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+    .form-actions{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    .hint{
+      color: var(--muted2);
+      font-size: 13px;
+    }
+    .output{
+      margin-top: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 14px;
+      display: none;
+    }
+    .output pre{
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(0,0,0,0.22);
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 14px;
+      padding: 12px;
+      color: rgba(255,255,255,0.86);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .output-top{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Sections */
+    section{
+      padding: 38px 0;
+    }
+    .section-title{
+      font-size: 22px;
+      margin: 0 0 10px;
+      letter-spacing: -0.2px;
+    }
+    .section-sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 72ch;
+    }
+
+    .cards{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .mini{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .mini h3{
+      margin: 0 0 6px;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+    }
+    .mini p{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* Outputs list */
+    .list{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .li{
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .ic{
+      width: 34px; height: 34px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.05);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: rgba(255,255,255,0.86);
+      flex: 0 0 auto;
+    }
+    .li b{ display:block; margin-bottom: 4px; }
+    .li span{ color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    /* Example */
+    .example{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .codebox{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius2);
+      padding: 16px;
+      overflow: hidden;
+    }
+    .codebox h4{
+      margin: 0 0 10px;
+      font-size: 13px;
+      color: var(--muted2);
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .codebox pre{
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: rgba(255,255,255,0.86);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    /* Pricing */
+    .pricing{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+    .price-card{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.04);
+      border-radius: var(--radius2);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .price-card.featured{
+      border-color: rgba(124,58,237,0.55);
+      background: linear-gradient(180deg, rgba(124,58,237,0.18), rgba(255,255,255,0.04));
+      box-shadow: 0 24px 90px rgba(124,58,237,0.18);
+    }
+    .price-top{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .price-name{
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      font-size: 18px;
+    }
+    .price{
+      font-size: 34px;
+      font-weight: 950;
+      letter-spacing: -0.6px;
+      margin-top: 4px;
+    }
+    .per{
+      color: var(--muted2);
+      font-size: 13px;
+      margin-top: -4px;
+    }
+    ul{
+      margin: 0;
+      padding: 0 0 0 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 14px;
+    }
+    .price-actions{ margin-top: auto; display:flex; gap:10px; flex-wrap: wrap; }
+
+    /* FAQ */
+    .faq{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    details{
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+    }
+    summary{
+      cursor: pointer;
+      font-weight: 850;
+      color: rgba(255,255,255,0.88);
+      list-style: none;
+    }
+    summary::-webkit-details-marker{ display: none; }
+    details p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* Final CTA */
+    .final{
+      padding: 46px 0 62px;
+    }
+    .final-box{
+      border: 1px solid rgba(255,255,255,0.12);
+      background: linear-gradient(135deg, rgba(124,58,237,0.14), rgba(6,182,212,0.10));
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    .final-box h2{
+      margin: 0 0 6px;
+      font-size: 22px;
+      letter-spacing: -0.2px;
+    }
+    .final-box p{
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 62ch;
+    }
+
+    footer{
+      padding: 26px 0 40px;
+      color: var(--muted2);
+      font-size: 13px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .foot{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap: wrap;
+    }
+    .foot a{ color: rgba(255,255,255,0.78); }
+    .foot a:hover{ text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .cards{ grid-template-columns: 1fr; }
+      .list{ grid-template-columns: 1fr; }
+      .example{ grid-template-columns: 1fr; }
+      .pricing{ grid-template-columns: 1fr; }
+      .faq{ grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px){
+      .nav-links{ display: none; }
+      .btn{ width: 100%; }
+      .cta-row{ flex-direction: column; }
+      .form-actions{ flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="wrap nav-in">
+      <a class="brand" href="#top" aria-label="StoreKit home">
+        <span class="logo" aria-hidden="true"></span>
+        <span>StoreKit</span>
+      </a>
+
+      <div class="nav-links" aria-label="Primary navigation">
+        <a href="#how">How it works</a>
+        <a href="#outputs">Outputs</a>
+        <a href="#examples">Examples</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </div>
+
+      <a class="btn small primary" href="#try">Generate</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <header class="hero" id="top">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="pill">
+            <span class="dot" aria-hidden="true"></span>
+            <span>Steam / itch store pages • copy-paste ready</span>
+          </div>
+
+          <h1>Write a store page that actually sells — in 2 minutes.</h1>
+          <p class="sub">
+            Paste your rough notes. Get a polished description, feature bullets, tags and a punchy short pitch —
+            in your game’s voice.
+          </p>
+
+          <div class="cta-row">
+            <!-- TODO: replace href with your real app route when ready -->
+            <a class="btn primary" href="#try">Generate my first store page</a>
+            <a class="btn ghost" href="#examples">See examples</a>
+          </div>
+
+          <div class="microtrust">No credit card for the first 2 generations. Markdown export. Copy to clipboard.</div>
+
+          <div class="stats" aria-label="Highlights">
+            <div class="chip"><b>Presets</b>: horror, cozy, roguelike, NSFW, mobile</div>
+            <div class="chip"><b>Outputs</b>: pitch, full page, bullets, tags</div>
+            <div class="chip"><b>Goal</b>: stop procrastinating marketing</div>
+          </div>
+        </div>
+
+        <!-- TRY CARD -->
+        <div class="card" id="try">
+          <div class="card-in">
+            <div class="card-head">
+              <div class="card-title">Try a demo (fake generator)</div>
+              <div class="badge">MVP landing</div>
+            </div>
+
+            <div class="grid2">
+              <div>
+                <label for="genre">Preset</label>
+                <select id="genre">
+                  <option>Horror</option>
+                  <option>Cozy</option>
+                  <option selected>Roguelike</option>
+                  <option>Mobile Casual</option>
+                  <option>NSFW / Spicy</option>
+                </select>
+              </div>
+              <div>
+                <label for="platform">Platform</label>
+                <select id="platform">
+                  <option selected>Steam</option>
+                  <option>itch.io</option>
+                  <option>Play Store</option>
+                </select>
+              </div>
+            </div>
+
+            <label for="notes">What’s your game about?</label>
+            <textarea id="notes" placeholder="Paste messy notes: mechanics, vibe, setting, hook..."></textarea>
+
+            <div class="form-actions">
+              <button class="btn primary" id="genBtn" type="button">Generate (demo)</button>
+              <div class="hint">This is placeholder output — wire up your real backend later.</div>
+            </div>
+
+            <div class="output" id="output">
+              <div class="output-top">
+                <div class="badge">Generated preview</div>
+                <button class="btn small" id="copyBtn" type="button">Copy</button>
+              </div>
+              <pre id="outText"></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HOW -->
+  <section id="how">
+    <div class="wrap">
+      <h2 class="section-title">How it works</h2>
+      <p class="section-sub">
+        One job. One output: a store page you can paste into Steam/itch. No fluff, no “marketing course”, no BS.
+      </p>
+
+      <div class="cards">
+        <div class="mini">
+          <h3>1) Paste the chaos</h3>
+          <p>Notes, lore, mechanics, vibes — doesn’t matter. Start ugly.</p>
+        </div>
+        <div class="mini">
+          <h3>2) Pick a preset</h3>
+          <p>Horror, cozy, roguelike, spicy NSFW, mobile casual — match your audience.</p>
+        </div>
+        <div class="mini">
+          <h3>3) Copy. Ship. Repeat.</h3>
+          <p>Export Markdown, keep versions per project, iterate fast.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTPUTS -->
+  <section id="outputs">
+    <div class="wrap">
+      <h2 class="section-title">What you get</h2>
+      <p class="section-sub">Everything you need for a solid store page — formatted and ready.</p>
+
+      <div class="list">
+        <div class="li">
+          <div class="ic">✦</div>
+          <div>
+            <b>Short pitch</b>
+            <span>1–2 sentences that sell the hook immediately.</span>
+          </div>
+        </div>
+        <div class="li">
+          <div class="ic">☰</div>
+          <div>
+            <b>Full description</b>
+            <span>Steam-style structure that doesn’t read like a robot.</span>
+          </div>
+        </div>
+        <div class="li">
+          <div class="ic">✓</div>
+          <div>
+            <b>Feature bullets</b>
+            <span>Player-facing bullets (not dev jargon).</span>
+          </div>
+        </div>
+        <div class="li">
+          <div class="ic">#</div>
+          <div>
+            <b>Tag suggestions</b>
+            <span>Discoverability-focused suggestions based on genre & vibe.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section id="examples">
+    <div class="wrap">
+      <h2 class="section
