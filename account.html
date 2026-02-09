@@ -1,1 +1,64 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StoreKit — Login</title>
+</head>
+<body>
+  <main style="max-width:520px;margin:40px auto;padding:0 16px;font-family:system-ui;color:#111;">
+    <h1>Zaloguj się</h1>
+    <p>Podaj email — wyślę magic link.</p>
 
+    <form id="loginForm">
+      <label>Email</label><br/>
+      <input id="email" type="email" required placeholder="you@domain.com"
+             style="width:100%;padding:12px;border:1px solid #ccc;border-radius:10px" />
+      <button id="btn" type="submit"
+              style="margin-top:12px;width:100%;padding:12px;border-radius:10px;border:0;background:#111;color:#fff;font-weight:700">
+        Wyślij link
+      </button>
+      <p id="msg" style="margin-top:12px;"></p>
+    </form>
+  </main>
+
+  <script type="module">
+    import { supabase } from "/js/supabase.js";
+    import { redirectIfAuthed } from "/js/auth-guards.js";
+
+    // jeśli już zalogowany → profile
+    await redirectIfAuthed();
+
+    const form = document.getElementById("loginForm");
+    const emailEl = document.getElementById("email");
+    const btn = document.getElementById("btn");
+    const msg = document.getElementById("msg");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      msg.textContent = "";
+      btn.disabled = true;
+      btn.textContent = "Wysyłam...";
+
+      const email = emailEl.value.trim();
+
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          // po kliknięciu magic linka user wróci tutaj:
+          emailRedirectTo: `${window.location.origin}/profile.html`
+        }
+      });
+
+      if (error) {
+        msg.textContent = "Błąd: " + error.message;
+      } else {
+        msg.textContent = "OK — sprawdź maila i kliknij link.";
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Wyślij link";
+    });
+  </script>
+</body>
+</html>
