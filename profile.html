@@ -1,1 +1,39 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>StoreKit — Profile</title>
+</head>
+<body>
+  <main style="max-width:720px;margin:40px auto;padding:0 16px;font-family:system-ui;color:#111;">
+    <h1>Profil</h1>
+    <p>Zalogowany jako: <b id="who">...</b></p>
 
+    <button id="logout"
+            style="padding:12px 14px;border-radius:10px;border:1px solid #ccc;background:#fff;font-weight:700;cursor:pointer">
+      Wyloguj
+    </button>
+  </main>
+
+  <script type="module">
+    import { supabase } from "/js/supabase.js";
+    import { requireAuth } from "/js/auth-guards.js";
+
+    const session = await requireAuth();
+
+    document.getElementById("who").textContent =
+      session?.user?.email || session?.user?.id || "unknown";
+
+    document.getElementById("logout").addEventListener("click", async () => {
+      await supabase.auth.signOut();
+      window.location.href = "/account.html";
+    });
+
+    // (opcjonalnie) reaguj na zmianę sesji w czasie
+    supabase.auth.onAuthStateChange((_event, sessionNow) => {
+      if (!sessionNow) window.location.href = "/account.html";
+    });
+  </script>
+</body>
+</html>
